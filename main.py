@@ -1,28 +1,39 @@
 import sys
+import re
+from unicodedata import normalize
+def transformarTexto(texto): #Elimina elementos diacriticos, tildes, dieresis entre otros ademas de borrar los espacios
+    nuevoTexto = re.sub(
+        r"([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+", r"\1",  
+        normalize( "NFD", texto), 0, re.I
+    )
+    nuevoTexto = re.sub(r'[.,"\'-?:!;]', '', nuevoTexto)
+    nuevoTexto = normalize( 'NFC', nuevoTexto)
+    nuevoTexto = nuevoTexto.replace(" ","")
+    return nuevoTexto
 
 def esPalindromo(texto):
-    strippedT = texto.replace(" ","")
-    lowerT = strippedT.lower()
-    inverso = lowerT[::-1] 
-    if (lowerT == inverso):
+    textoTransformado = transformarTexto(texto)
+    minuscula = textoTransformado.lower()
+    inverso = minuscula[::-1] 
+    if (minuscula == inverso):
         print("True")
     else:
         print("False")
     
 
 def chequeoParentesis(texto): #No contempla el uso correcto de parentesis, solo si la cantidad de abiertos es igual a la de cerrados
-    parentesisAbierto = 0
-    parentesisCerrado = 0
+    parentesisAbiertos = 0
+    parentesisCerrados= 0
     for char in texto:
         asciichar = ord(char)
         if (asciichar == 40):
-            parentesisAbierto += 1
+            parentesisAbiertos += 1
         elif(asciichar == 41):
-            parentesisCerrado += 1
-        if(parentesisCerrado > parentesisAbierto):
+            parentesisCerrados += 1
+        if(parentesisCerrados > parentesisAbiertos):
             print("Un parentesis cerrado aparecio antes que un abierto")
             break 
-    if(parentesisAbierto == parentesisCerrado):
+    if(parentesisAbiertos == parentesisCerrados):
         print("True")
     else:
         print("False")
